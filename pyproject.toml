@@ -1,0 +1,21 @@
+[project]
+name = "memgold"
+version = "0.1.0"
+description = "AI memory layer — extraction, hybrid storage, retrieval, ranking, context"
+readme = "README.md"
+authors = [
+    { name = "vgtom", email = "vinu.thomas@effem.com" }
+]
+requires-python = ">=3.10.16"
+dependencies = [
+    "pydantic>=2.5,<3",
+    "fastapi>=0.109,<1",
+    "uvicorn[standard]>=0.27,<1",
+]
+
+[project.scripts]
+memgold-api = "memgold.api.main:run"
+
+[build-system]
+requires = ["uv_build>=0.11.8,<0.12.0"]
+build-backend = "uv_build"
