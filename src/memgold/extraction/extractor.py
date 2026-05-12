@@ -1,35 +1,55 @@
-"""Turn unstructured text into structured ``Memory`` records."""
+"""Back-compat extractor facade over :class:`~memgold.extraction.heuristic.DefaultExtractionPipeline`."""
 
 from __future__ import annotations
 
-from memgold.models.memory import Memory, MemoryType
+from memgold.extraction.heuristic import DefaultExtractionPipeline
+from memgold.interfaces.extraction import ExtractionPipeline
+from memgold.models.memory import Memory
 
 
 class MemoryExtractor:
-    """Pluggable extraction pipeline; this build uses heuristic stubs."""
+    """Deprecated surface; prefer :class:`~memgold.services.ingestion.MemoryIngestionService`."""
 
-    async def extract(self, text: str) -> list[Memory]:
-        """Parse *text* into candidate memories.
+    def __init__(self, pipeline: ExtractionPipeline | None = None) -> None:
+        self._pipeline = pipeline or DefaultExtractionPipeline()
 
-        Returns:
-            One or two placeholder memories so downstream components can be exercised
-            without an LLM. Production systems would call an LLM or rules engine here.
-        """
-        snippet = text.strip() or "(empty input)"
-        preview = snippet if len(snippet) <= 120 else snippet[:117] + "..."
-        return [
-            Memory(
-                content=f"Stub fact extracted from user message: {preview}",
-                type=MemoryType.FACT,
-                confidence_score=0.72,
-                tags=["stub", "fact"],
-                metadata={"source": "MemoryExtractor.stub"},
-            ),
-            Memory(
-                content=f"Stub semantic summary of input: {preview}",
-                type=MemoryType.SEMANTIC,
-                confidence_score=0.55,
-                tags=["stub", "semantic"],
-                metadata={"source": "MemoryExtractor.stub"},
-            ),
-        ]
+    async def extract(
+        self,
+        text: str,
+        *,
+        user_id: str = "anonymous",
+        session_id: str | None = None,
+    ) -> list[Memory]:
+        """Return :class:`~memgold.models.memory.Memory` rows without persistence."""
+        from memgold.extraction.importance import score_importance
+        from memgold.models.extraction import MemoryCandidate
+        from uuid import uuid4
+
+        candidates = await self._pipeline.build_candidates(
+            text,
+            user_id=user_id,
+            session_id=session_id,
+        )
+        out: list[Memory] = []
+        for cand in candidates:
+            assert isinstance(cand, MemoryCandidate)
+            salience = score_importance(cand, text_len=len(text))
+            out.append(
+                Memory(
+                    id=uuid4(),
+                    user_id=user_id,
+                    session_id=session_id,
+                    content=cand.content,
+                    summary=cand.summary,
+                    memory_type=cand.memory_type,
+                    hierarchy_path=cand.hierarchy_path,
+                    semantic_cluster=cand.semantic_cluster,
+                    entities=list(cand.entities),
+                    keywords=list(cand.keywords),
+                    confidence=float(cand.confidence),
+                    salience_score=float(max(cand.salience_score, salience)),
+                    source=cand.source,
+                    metadata=dict(cand.metadata),
+                ),
+            )
+        return out

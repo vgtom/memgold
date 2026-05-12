@@ -6,12 +6,17 @@ readme = "README.md"
 authors = [
     { name = "vgtom", email = "vinu.thomas@effem.com" }
 ]
-requires-python = ">=3.10.16"
+requires-python = ">=3.12"
 dependencies = [
     "pydantic>=2.5,<3",
     "fastapi>=0.109,<1",
     "uvicorn[standard]>=0.27,<1",
 ]
+
+[project.optional-dependencies]
+openai = ["httpx>=0.27,<1"]
+local-embeddings = ["sentence-transformers>=3,<4"]
+dev = ["pytest>=8,<9", "httpx>=0.27,<1"]
 
 [project.scripts]
 memgold-api = "memgold.api.main:run"

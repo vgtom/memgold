@@ -1,5 +1,5 @@
-"""Post-retrieval scoring and ordering."""
+"""Ranking pipelines."""
 
-from memgold.ranking.ranker import MemoryRanker
+from memgold.ranking.pipeline import RankingPipeline, RankingWeights
 
-__all__ = ["MemoryRanker"]
+__all__ = ["RankingPipeline", "RankingWeights"]

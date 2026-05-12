@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from fastapi import FastAPI
 
-from memgold.api.routes import router
+from memgold.api.routes import router as legacy_router
+from memgold.api.routes_memories import router as memories_router
 
 
 def create_app() -> FastAPI:
@@ -12,9 +13,10 @@ def create_app() -> FastAPI:
     application = FastAPI(
         title="memgold",
         version="0.1.0",
-        summary="AI memory layer API (scaffolding)",
+        summary="AI memory layer — ingestion, palace hierarchy, hybrid retrieval, consolidation",
     )
-    application.include_router(router)
+    application.include_router(memories_router)
+    application.include_router(legacy_router)
     return application
 
 

@@ -1,11 +1,25 @@
-"""Storage backends and in-memory stubs."""
+"""Storage backends and in-memory adapters."""
 
-from memgold.storage.base import KVStore, VectorStore
-from memgold.storage.memory_stores import InMemoryKVStore, InMemoryVectorStore
+from memgold.interfaces.storage import CacheStore, GraphStore, MemoryStore, VectorStore
+from memgold.storage.in_memory import (
+    InMemoryCacheStore,
+    InMemoryGraphStore,
+    InMemoryMemoryStore,
+    InMemoryVectorStore,
+    SharedMemoryState,
+)
+from memgold.storage.serialization import memory_from_json, memory_to_json
 
 __all__ = [
-    "KVStore",
-    "VectorStore",
-    "InMemoryKVStore",
+    "CacheStore",
+    "GraphStore",
+    "InMemoryCacheStore",
+    "InMemoryGraphStore",
+    "InMemoryMemoryStore",
     "InMemoryVectorStore",
+    "MemoryStore",
+    "SharedMemoryState",
+    "VectorStore",
+    "memory_from_json",
+    "memory_to_json",
 ]

@@ -1,5 +1,6 @@
-"""Hybrid retrieval orchestration."""
+"""Retrieval strategies."""
 
-from memgold.retrieval.retriever import MemoryRetriever
+from memgold.retrieval.hybrid import HybridRetriever, SemanticExpander
+from memgold.retrieval.types import RetrievalRequest, ScoredMemory
 
-__all__ = ["MemoryRetriever"]
+__all__ = ["HybridRetriever", "RetrievalRequest", "ScoredMemory", "SemanticExpander"]

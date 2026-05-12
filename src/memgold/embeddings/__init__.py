@@ -1,5 +1,6 @@
-"""Embedding providers (stubs and future LLM-backed implementations)."""
+"""Embedding providers and helpers."""
 
-from memgold.embeddings.stub import stub_embed
+from memgold.embeddings.cached import CachedEmbedder
+from memgold.embeddings.stub import StubEmbedder, stub_embed
 
-__all__ = ["stub_embed"]
+__all__ = ["CachedEmbedder", "StubEmbedder", "stub_embed"]

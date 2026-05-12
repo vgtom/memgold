@@ -5,6 +5,8 @@ from __future__ import annotations
 import hashlib
 import math
 
+from memgold.interfaces.embedder import Embedder
+
 _EMBED_DIM = 64
 
 
@@ -24,3 +26,14 @@ def stub_embed(text: str) -> list[float]:
         out.append(max(-1.0, min(1.0, val)))
     norm = math.sqrt(sum(v * v for v in out)) or 1.0
     return [v / norm for v in out]
+
+
+class StubEmbedder(Embedder):
+    """Local embedder with no network calls; implements :class:`Embedder`."""
+
+    @property
+    def dimensions(self) -> int:
+        return _EMBED_DIM
+
+    async def embed_texts(self, texts: list[str]) -> list[list[float]]:
+        return [stub_embed(t) for t in texts]
